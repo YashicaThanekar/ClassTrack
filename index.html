@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClassTrack</title>
+    <link rel="stylesheet" href="login-page.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="login-container">
+        
+        <form onsubmit="event.preventDefault(); loginUser();">
+            <h1 class="Login-text">ClassTrack Login</h1><br/><br/>
+            <button type="button" id="teacher-login-btn">Teacher</button><button type="button" id="student-login-btn">Student</button><br/><br/><br>
+
+            <label id="user-label">Moodle ID</label>
+            <input type="text" id="loginInput" placeholder="Enter your Moodle ID">
+            <br/><br/>
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter your password">
+            <br/><br/>
+            <input type="hidden" id="role" value="student">
+            <br>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>
