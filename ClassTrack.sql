@@ -72,7 +72,7 @@ INSERT INTO subjects (subject_name) VALUES
 ('Computer Networks');
 
 -- =========================
--- ATTENDANCE (CORE TABLE)
+-- ATTENDANCE 
 -- =========================
 CREATE TABLE attendance (
     attendance_id INT AUTO_INCREMENT PRIMARY KEY,
