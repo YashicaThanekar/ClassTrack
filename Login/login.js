@@ -34,10 +34,10 @@ function loginUser() {
     .then(async res => {
         const data = await res.json();
         if (res.ok) {
-            if (data.role === "admin") {
-                window.location.href = "admin.html";
+            if (data.role === "teacher") {
+                window.location.href = "../Admin/admin.html";
             } else if (data.role === "student") {
-                window.location.href = "profile.html";
+                window.location.href = "../Profile/profile.html";
             } else {
                 alert("Login successful, but unknown role.");
             }

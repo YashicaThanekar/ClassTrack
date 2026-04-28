@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify
 import mysql.connector
 from flask_cors import CORS
@@ -17,6 +16,19 @@ db = mysql.connector.connect(
     password=os.getenv("MYSQL_PASSWORD"),
     database=os.getenv("MYSQL_DATABASE")
 )
+
+# Add the /students endpoint after db is initialized
+@app.route('/students', methods=['GET'])
+def get_students():
+    cursor = db.cursor(dictionary=True)
+    query = """
+        SELECT login_id AS moodle_id, name
+        FROM users
+        WHERE role = 'student'
+    """
+    cursor.execute(query)
+    students = cursor.fetchall()
+    return jsonify(students)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -45,6 +57,27 @@ def login():
         return jsonify({
             "message": "Invalid credentials"
         }), 401
+
+@app.route('/mark_attendance', methods=['POST'])
+def mark_attendance():
+    data = request.json
+    attendance_list = data.get('attendance', [])
+    from datetime import date
+    today = date.today().isoformat()
+    cursor = db.cursor()
+    for entry in attendance_list:
+        # Get student id from moodle_id (login_id)
+        cursor.execute("SELECT id FROM users WHERE login_id=%s", (entry['moodle_id'],))
+        result = cursor.fetchone()
+        if result:
+            student_id = result[0]
+            # Save attendance for today
+            cursor.execute(
+                "INSERT INTO attendance (student_id, date, status) VALUES (%s, %s, %s)",
+                (student_id, today, entry['status'])
+            )
+    db.commit()
+    return jsonify({'message': 'Attendance saved for today!'})
 
 if __name__ == '__main__':
     app.run(debug=True)

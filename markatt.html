@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Attendance</title>
+    <link rel="stylesheet" href="Admin/admin.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <nav>
+        <!-- Menu button --> 
+<button
+  id="menu-btn"
+  class="relative border-2 border-black group hover:border-green-500 w-12 h-12 duration-500 overflow-hidden"
+  type="button"
+>
+  <p
+    class="font-Manrope text-3xl h-full w-full flex items-center justify-center text-black duration-500 relative z-10 group-hover:scale-0"
+  >
+    ×
+  </p>
+  <span
+    class="absolute w-full h-full bg-green-500 rotate-45 group-hover:top-9 duration-500 top-12 left-0"
+  ></span>
+  <span
+    class="absolute w-full h-full bg-green-500 rotate-45 top-0 group-hover:left-9 duration-500 left-12"
+  ></span>
+  <span
+    class="absolute w-full h-full bg-green-500 rotate-45 top-0 group-hover:right-9 duration-500 right-12"
+  ></span>
+  <span
+    class="absolute w-full h-full bg-green-500 rotate-45 group-hover:bottom-9 duration-500 bottom-12 right-0"
+  ></span>
+</button>
+        <h1>ClassTrack</h1>
+        <button id="logout-btn" type="button">Logout</button>
+    </nav>
+    <div id="sidebar" class="sidebar">
+      <a href="allstudents.html">All Students</a>
+      <a href="markatt.html">Mark Attendance</a>
+      <a href="analysis.html">Analysis</a>
+    </div>
+    <script src="Admin/admin.js"></script>
+    <main>
+      <h2>Mark Attendance</h2>
+      <form id="attendance-form">
+        <table id="attendance-table" border="1" cellpadding="8">
+          <thead>
+            <tr>
+              <th>Moodle ID</th>
+              <th>Name</th>
+              <th>Present</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Students will be inserted here -->
+          </tbody>
+        </table>
+        <div style="margin-top:20px; text-align:center;">
+          <button type="submit" style="padding:10px 30px; font-size:1.1rem; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer;">Done</button>
+        </div>
+      </form>
+    </main>
+    <script>
+    fetch('http://localhost:5000/students')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector('#attendance-table tbody');
+        tbody.innerHTML = '';
+        data.forEach((stu, idx) => {
+          tbody.innerHTML += `<tr>
+            <td>${stu.moodle_id}</td>
+            <td>${stu.name}</td>
+            <td><input type="checkbox" name="attendance" value="present" data-moodleid="${stu.moodle_id}"></td>
+          </tr>`;
+        });
+      });
+
+    document.getElementById('attendance-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const rows = document.querySelectorAll('#attendance-table tbody tr');
+      const attendance = [];
+      rows.forEach(row => {
+        const moodle_id = row.children[0].textContent;
+        const name = row.children[1].textContent;
+        const present = row.querySelector('input[type="checkbox"]').checked;
+        attendance.push({ moodle_id, name, status: present ? 'present' : 'absent' });
+      });
+      // Send attendance to backend
+      fetch('http://localhost:5000/mark_attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ attendance })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || 'Attendance marked!');
+      })
+      .catch(() => {
+        alert('Failed to save attendance.');
+      });
+    });
+    </script>
+</body>
+</html>

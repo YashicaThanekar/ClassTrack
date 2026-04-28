@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Students</title>
+    <link rel="stylesheet" href="Admin/admin.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <nav>
+        <!-- Menu button --> 
+<button
+  id="menu-btn"
+  class="relative border-2 border-black group hover:border-green-500 w-12 h-12 duration-500 overflow-hidden"
+  type="button"
+>
+  <p
+    class="font-Manrope text-3xl h-full w-full flex items-center justify-center text-black duration-500 relative z-10 group-hover:scale-0"
+  >
+    ×
+  </p>
+  <span
+    class="absolute w-full h-full bg-green-500 rotate-45 group-hover:top-9 duration-500 top-12 left-0"
+  ></span>
+  <span
+    class="absolute w-full h-full bg-green-500 rotate-45 top-0 group-hover:left-9 duration-500 left-12"
+  ></span>
+  <span
+    class="absolute w-full h-full bg-green-500 rotate-45 top-0 group-hover:right-9 duration-500 right-12"
+  ></span>
+  <span
+    class="absolute w-full h-full bg-green-500 rotate-45 group-hover:bottom-9 duration-500 bottom-12 right-0"
+  ></span>
+</button>
+        <h1>ClassTrack</h1>
+        <button id="logout-btn" type="button">Logout</button>
+    </nav>
+    <div id="sidebar" class="sidebar">
+      <a href="allstudents.html">All Students</a>
+      <a href="markatt.html">Mark Attendance</a>
+      <a href="analysis.html">Analysis</a>
+    </div>
+    <script src="Admin/admin.js"></script>
+    <main>
+      <h2>All Students</h2>
+      <table id="students-table" border="1" cellpadding="8">
+        <thead>
+          <tr>
+            <th>Moodle ID</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Students will be inserted here -->
+        </tbody>
+      </table>
+    </main>
+    <script>
+    fetch('http://localhost:5000/students')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector('#students-table tbody');
+        tbody.innerHTML = '';
+        data.forEach(stu => {
+          tbody.innerHTML += `<tr>
+            <td>${stu.moodle_id}</td>
+            <td>${stu.name}</td>
+          </tr>`;
+        });
+      })
+      .catch(err => {
+        document.querySelector('#students-table tbody').innerHTML = '<tr><td colspan="2">Failed to load students</td></tr>';
+      });
+    </script>
+</body>
+</html>
